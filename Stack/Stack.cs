@@ -8,39 +8,38 @@ namespace Stack
 {
     class Stack
     {
-        string infix;
-		string[] stack = new string[20];
-        int top;
-		public Stack() {
-			this.top = -1;
+        string infix; // Biểu thức
+		string[] stack = new string[20]; // Ngăn xếp stack
+        int top = -1;	// Phần tử trên cùng của stack
+		public Stack() {}
+
+		void push(string item)
+		{
+			this.top++; // vi trí phần tử mới
+			this.stack[this.top] = item; // Đưa phần tử mới vào stack
+		}
+
+		string pop()
+		{
+			if (this.top == -1) // stack rỗng
+				return "";
+			else
+			{
+				string key = this.stack[this.top]; // Lấy phần tử ra khỏi stack
+				this.stack[this.top] = "";
+				this.top -= 1; // Chỉ đến phần tử tiếp theo
+				return key; // pop thành công
+			}
 		}
 
 		public void getInfix()
 		{
 			string value;
-			Console.WriteLine("Nhap bieu thuc(Cac phan tu cach nhau 1 khoang trang: ");
+			Console.WriteLine("Nhap bieu thuc(Cac phan tu cach nhau 1 khoang trang): ");
 			value = Console.ReadLine();
 			this.infix = value;
 		}
 
-		void Push(string x)
-		{
-				this.top++; // vi trí phan tu moi
-				this.stack[this.top] = x; // dua pt moi vào stack
-		}
-
-		string Pop()
-		{
-			if (this.top == -1) // stack rong, return 0
-				return "";
-			else
-			{
-				string key = this.stack[this.top]; // lay phan tu khoi stack
-				this.stack[this.top] = "";
-				this.top -= 1; // chi den phan tt tiep theo
-				return key; // Pop thành công return 1
-			}
-		}
 		int precedence(string x)
 		{
 			if (x.CompareTo("(") == 0)
@@ -51,40 +50,41 @@ namespace Stack
 				return 2;
 			return 3;
 		}
+
 		string infixtoPostfix()
 		{
 			string postfix = "";
-			string[] infixArr = this.infix.Split(' ');
-			foreach (string val in infixArr)
+			string[] infixArr = this.infix.Split(' ');// Tách riêng biệt từng phần tử
+			foreach (string val in infixArr) // Duyệt toàn bộ phần tử
 			{
 				if (int.TryParse(val, out int num))
 					postfix += val.ToString() + " ";
 				else 
 					if(val.CompareTo("(") == 0)
-						Push(val);
+						push(val);
 					else 
 						if(val.CompareTo(")") == 0)
 						{
-							string x = Pop();
+							string x = pop();
 							while (x.CompareTo("(") != 0)
 							{
 								postfix += x + " ";
-								x = Pop();
+								x = pop();
 							}	
 						}
 						else
 						{
 							while(this.top > -1 && precedence(val) <= precedence(this.stack[this.top]))
 							{
-								postfix += Pop() + " ";
+								postfix += pop() + " ";
 							}
-							Push(val);
+							push(val);
 						}
 			}
 			
-			while(top > -1)
+			while(top > -1) // pop toàn bộ phần từ trong stack
 			{
-				postfix += Pop() + " ";
+				postfix += pop() + " ";
 			}
 
 			return postfix;
@@ -94,23 +94,20 @@ namespace Stack
 		{
 			string result;
 			string[] postfixArr = infixtoPostfix().Trim().Split(' ');
-			Console.WriteLine("Chuyen sang bieu thuc hau to: ");
+			Console.WriteLine("\n==============================\nChuyen sang bieu thuc hau to: ");
 			foreach (string val in postfixArr)
 			{
 				Console.Write(val);
-				//Console.WriteLine("value: " + val);
 				if (int.TryParse(val, out int num))
-					Push(val);
+					push(val);
 				else
 				{
-					string t1 = Pop();
-					string t2 = Pop();
+					string t1 = pop(), t2 = pop();
 					float pop1, pop2;
 					Single.TryParse(t1, out pop1);
 					Single.TryParse(t2, out pop2);
 					switch (val)
 					{
-
 						case "+":
 							result = (pop2 + pop1).ToString();
 							break;
@@ -124,17 +121,15 @@ namespace Stack
 							result = (pop2 * pop1).ToString();
 							break;
 						default:
-							Console.WriteLine("\nInvalid Operator");
+							Console.WriteLine("\nToan tu khong hop le");
 							return 0;
 					}
-					Push(result);
+					push(result);
 
 				}
 			}
-			result = Pop();
+			result = pop();
 			return (Convert.ToSingle(result));
-			//return 0;
 		}
-
 	}
 }

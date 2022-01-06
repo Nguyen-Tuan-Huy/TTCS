@@ -11,9 +11,17 @@ namespace Stack
         static void Main(string[] args)
         {
             Stack s = new Stack();
-            s.getInfix();
-            //s.countEvaluate();
-            Console.WriteLine("\nKet qua: " + s.countEvaluate());
+            string continueRun = "1";
+            while(continueRun.CompareTo("1") == 0)
+            {
+                Console.Clear();
+                s.getInfix();
+                Console.WriteLine("\n------------------------\nKet qua: \n" + s.countEvaluate());
+
+                Console.WriteLine("------------------------\nNhan '1' de tiep tuc\n------------------------");
+                continueRun = Console.ReadLine();
+            }
+
 
             Console.ReadKey();
 
